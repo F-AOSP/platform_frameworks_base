@@ -2161,12 +2161,11 @@
   <java-symbol type="bool" name="config_protocol_errors_perm_failure" />
   <!-- config softap extention feature -->
   <java-symbol type="bool" name="config_softap_extention" />
+  <java-symbol type="bool" name="config_wifiApFirmwareReload" />
 
   <java-symbol type="bool" name="config_enable_mms_with_mobile_data_off" />
-
   <java-symbol type="bool" name="config_fetch_apn_from_omh_card" />
 
   <!-- Package Manager -->
   <java-symbol type="array" name="config_disabledComponents" />
-
 </resources>
