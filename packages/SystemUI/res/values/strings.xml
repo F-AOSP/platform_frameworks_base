@@ -1046,6 +1046,12 @@
     <!-- Summary for battery percentage preference [CHAR LIMIT=NONE] -->
     <string name="show_battery_percentage_summary">Show battery level percentage inside the status bar icon when not charging</string>
 
+    <!-- Preference to show/hide reboot action in global actions menu [CHAR LIMIT=50] -->
+    <string name="show_reboot_global_action">Show restart in global actions menu</string>
+
+    <!-- Summary for reboot action in global actions menu preference [CHAR LIMIT=NONE] -->
+    <string name="show_reboot_global_action_summary">Show restart button in the global actions menu when the power button is pressed.</string>
+
     <!-- Name of quick settings -->
     <string name="quick_settings">Quick Settings</string>
 
