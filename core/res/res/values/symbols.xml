@@ -2594,6 +2594,11 @@
   <java-symbol type="fraction" name="input_extract_text_margin_bottom" />
   <java-symbol type="fraction" name="input_extract_action_margin_bottom" />
 
+  <java-symbol type="drawable" name="ic_lock_reboot" />
+  <java-symbol type="string" name="reboot_confirm" />
+  <java-symbol type="string" name="reboot_title" />
+  <java-symbol type="string" name="global_action_reboot" />
+
   <java-symbol type="dimen" name="input_extract_action_button_width" />
   <java-symbol type="dimen" name="input_extract_action_button_height" />
 

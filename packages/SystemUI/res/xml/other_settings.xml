@@ -29,4 +29,10 @@
             android:title="@string/tuner_full_importance_settings"
             android:fragment="com.android.systemui.tuner.PowerNotificationControlsFragment"/>
 
+    <com.android.systemui.tuner.RebootSwitch
+        android:key="reboot_global_action"
+        android:title="@string/show_reboot_global_action"
+        android:summary="@string/show_reboot_global_action_summary"
+        android:persistent="false" />
+
 </PreferenceScreen>

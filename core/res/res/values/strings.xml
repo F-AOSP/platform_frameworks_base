@@ -4379,4 +4379,18 @@
     <!-- Accessibilty string added to a widget that has been suspended [CHAR LIMIT=20] -->
     <string name="suspended_widget_accessibility">Disabled <xliff:g id="label" example="Calendar">%1$s</xliff:g></string>
 
+    <!-- Title of dialog to confirm reboot. [CHAR LIMIT=50] -->
+    <string name="reboot_title" xliff:restype="x-GENERIC/POPUP/TITLE/NOICON/2ROW/V">Restart</string>
+
+    <!-- Reboot Confirmation Dialog.  When the user chooses to reboot the tablet, there will
+         be a confirmation dialog.  This is the message. -->
+    <string name="reboot_confirm" product="tablet" xliff:restype="x-GENERIC/POPUP/TEXT/V">Your tablet will restart.</string>
+
+    <!-- Reboot Confirmation Dialog.  When the user chooses to reboot the phone, there will
+         be a confirmation dialog.  This is the message. -->
+    <string name="reboot_confirm" product="default" xliff:restype="x-GENERIC/POPUP/TEXT/V">Your phone will restart.</string>
+
+    <!-- label for item that reboots the phone in phone options dialog -->
+    <string name="global_action_reboot" xliff:restype="x-GENERIC/POPUP/LIST/V">Restart</string>
+
 </resources>
