@@ -2306,5 +2306,9 @@
   <java-symbol type="bool" name="config_wifiApFirmwareReload" />
   
    <!-- Samsung STK Support -->
-+  <java-symbol type="bool" name="config_samsung_stk" />
+  <java-symbol type="bool" name="config_samsung_stk" />
+
+  <!-- Package Manager -->
+  <java-symbol type="array" name="config_disabledComponents" />
+
 </resources>
