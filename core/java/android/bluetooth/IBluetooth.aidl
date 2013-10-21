@@ -99,6 +99,9 @@ interface IBluetooth
     void getActivityEnergyInfoFromController();
     BluetoothActivityEnergyInfo reportActivityInfo();
 
+    int setSocketOpt(int type, int port, int optionName, in byte [] optionVal, int optionLen);
+    int getSocketOpt(int type, int port, int optionName, out byte [] optionVal);
+
     // for dumpsys support
     String dump();
 }
