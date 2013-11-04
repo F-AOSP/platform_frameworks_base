@@ -2304,4 +2304,7 @@
   <java-symbol type="integer" name="config_LTE_RSRP_threshold_type" />
 
   <java-symbol type="bool" name="config_wifiApFirmwareReload" />
+  
+   <!-- Samsung STK Support -->
++  <java-symbol type="bool" name="config_samsung_stk" />
 </resources>
