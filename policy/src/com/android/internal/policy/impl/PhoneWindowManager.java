@@ -585,7 +585,8 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     private static final int MSG_POWER_DELAYED_PRESS = 13;
     private static final int MSG_POWER_LONG_PRESS = 14;
 
-    boolean mWifiDisplayConnected;
+    boolean mWifiDisplayConnected = false;
+    int     mWifiDisplayCustomRotation = -1;
 
     private class PolicyHandler extends Handler {
         @Override
@@ -5026,6 +5027,8 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                 } else {
                     mWifiDisplayConnected = false;
                 }
+                mWifiDisplayCustomRotation =
+                        intent.getIntExtra("wfd_UIBC_rot", -1);
                 updateRotation(true);
             }
         }
@@ -5366,6 +5369,9 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                 // Ignore sensor when plugged into HDMI when demo HDMI rotation lock enabled.
                 // Note that the dock orientation overrides the HDMI orientation.
                 preferredRotation = mDemoHdmiRotation;
+            } else if ( mWifiDisplayConnected && (mWifiDisplayCustomRotation > -1)) {
+                // Ignore sensor when WFD is active and UIBC rotation is enabled
+                preferredRotation = mWifiDisplayCustomRotation;
             } else if (mHdmiPlugged && mDockMode == Intent.EXTRA_DOCK_STATE_UNDOCKED
                     && mUndockedHdmiRotation >= 0) {
                 // Ignore sensor when plugged into HDMI and an undocked orientation has
