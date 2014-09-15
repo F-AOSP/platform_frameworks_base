@@ -2183,6 +2183,9 @@
   <java-symbol type="bool" name="config_defaultInTouchMode" />
   <java-symbol type="bool" name="use_motion_accel" />
 
+  <!-- Enabled ESN Tracker -->
+  <java-symbol type="bool" name="config_telephony_ESN_Tracker_enabled" />
+
   <!-- config softap extention feature -->
   <java-symbol type="bool" name="config_softap_extention" />
 </resources>

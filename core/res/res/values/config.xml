@@ -2112,4 +2112,7 @@
         <item>Trying to delete call log</item>
         <item>Trying to turn on mobile data</item>
     </string-array>
+
+    <!-- Configuartion to support ESN Tracker -->
+    <bool name="config_telephony_ESN_Tracker_enabled">false</bool>
 </resources>
