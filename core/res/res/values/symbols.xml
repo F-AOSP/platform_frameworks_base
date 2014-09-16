@@ -1766,6 +1766,9 @@
   <java-symbol type="string" name="smv_application" />
   <java-symbol type="string" name="smv_process" />
   <java-symbol type="string" name="tethered_notification_message" />
+  <java-symbol type="string" name="tethered_notification_no_device_message" />
+  <java-symbol type="string" name="tethered_notification_one_device_message" />
+  <java-symbol type="string" name="tethered_notification_multi_device_message" />
   <java-symbol type="string" name="tethered_notification_title" />
   <java-symbol type="string" name="throttle_warning_notification_message" />
   <java-symbol type="string" name="throttle_warning_notification_title" />
@@ -2179,4 +2182,7 @@
   <java-symbol type="bool" name="config_LTE_eri_for_network_name" />
   <java-symbol type="bool" name="config_defaultInTouchMode" />
   <java-symbol type="bool" name="use_motion_accel" />
+
+  <!-- config softap extention feature -->
+  <java-symbol type="bool" name="config_softap_extention" />
 </resources>
