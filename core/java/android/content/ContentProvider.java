@@ -488,7 +488,7 @@ public abstract class ContentProvider implements ComponentCallbacks2 {
                 default:
                     break;
                 }
-               mAppOpsManager.noteOp(op, Binder.getCallingUid(), callingPkg);
+                return mAppOpsManager.noteOp(op, Binder.getCallingUid(), callingPkg);
             }
             return AppOpsManager.MODE_ALLOWED;
         }
