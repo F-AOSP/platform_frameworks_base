@@ -59,6 +59,8 @@ public class WifiConfiguration implements Parcelable {
     public static final String updateIdentiferVarName = "update_identifier";
     /** {@hide} */
     public static final int INVALID_NETWORK_ID = -1;
+    /** {@hide} */
+    public static final String SIMNumVarName = "sim_num";
     /**
      * Recognized key management schemes.
      */
@@ -381,6 +383,12 @@ public class WifiConfiguration implements Parcelable {
      * Uid used by autoJoin
      */
     public String autoJoinBSSID;
+
+    /**
+     * @hide
+     * sim number selected
+     */
+    public int SIMNum;
 
     /**
      * @hide
@@ -889,6 +897,7 @@ public class WifiConfiguration implements Parcelable {
         validatedInternetAccess = false;
         mIpConfiguration = new IpConfiguration();
         duplicateNetwork = false;
+        SIMNum = 1;
     }
 
     /**
@@ -1141,6 +1150,10 @@ public class WifiConfiguration implements Parcelable {
         }
         sbuf.append('\n').append(" PSK: ");
         if (this.preSharedKey != null) {
+            sbuf.append('*');
+        }
+        sbuf.append('\n').append(" sim_num ");
+        if (this.SIMNum > 0 ) {
             sbuf.append('*');
         }
         sbuf.append("\nEnterprise config:\n");
@@ -1585,6 +1598,7 @@ public class WifiConfiguration implements Parcelable {
             dirty = source.dirty;
             numNoInternetAccessReports = source.numNoInternetAccessReports;
             duplicateNetwork = source.duplicateNetwork;
+            SIMNum = source.SIMNum;
         }
     }
 
@@ -1654,6 +1668,7 @@ public class WifiConfiguration implements Parcelable {
         dest.writeInt(autoJoinUseAggressiveJoinAttemptThreshold);
         dest.writeInt(autoJoinBailedDueToLowRssi ? 1 : 0);
         dest.writeInt(numNoInternetAccessReports);
+        dest.writeInt(SIMNum);
     }
 
     /** Implement the Parcelable interface {@hide} */
@@ -1719,6 +1734,7 @@ public class WifiConfiguration implements Parcelable {
                 config.autoJoinUseAggressiveJoinAttemptThreshold = in.readInt();
                 config.autoJoinBailedDueToLowRssi = in.readInt() != 0;
                 config.numNoInternetAccessReports = in.readInt();
+                config.SIMNum = in.readInt();
                 return config;
             }
 
