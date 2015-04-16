@@ -77,8 +77,11 @@ public final class WebViewFactory {
     private static PackageInfo sPackageInfo;
 
     public static String getWebViewPackageName() {
-        return AppGlobals.getInitialApplication().getString(
-                com.android.internal.R.string.config_webViewPackageName);
+        Application initialApp = AppGlobals.getInitialApplication();
+        String pkg = initialApp.getString(
+                      com.android.internal.R.string.config_webViewPackageName);
+        if (isPackageInstalled(initialApp, pkg)){ return pkg; }
+        return "com.android.webview";
     }
 
     public static PackageInfo getLoadedPackageInfo() {
@@ -406,6 +409,14 @@ public final class WebViewFactory {
             }
         } catch (PackageManager.NameNotFoundException e) {
             Log.e(LOGTAG, "Failed to list WebView package libraries for loadNativeLibrary", e);
+        }
+    }
+
+    private static boolean isPackageInstalled(Context context, String packageName) {
+        try {
+            return context.getPackageManager().getPackageInfo(packageName, 0) != null;
+        } catch (PackageManager.NameNotFoundException e) {
+            return false;
         }
     }
 
