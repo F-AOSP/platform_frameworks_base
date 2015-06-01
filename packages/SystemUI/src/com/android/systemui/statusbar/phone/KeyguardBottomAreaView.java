@@ -48,6 +48,8 @@ import com.android.internal.widget.LockPatternUtils;
 import com.android.keyguard.EmergencyButton;
 import com.android.keyguard.KeyguardUpdateMonitor;
 import com.android.keyguard.KeyguardUpdateMonitorCallback;
+import com.android.systemui.EventLogConstants;
+import com.android.systemui.EventLogTags;
 import com.android.systemui.R;
 import com.android.systemui.statusbar.CommandQueue;
 import com.android.systemui.statusbar.KeyguardAffordanceView;
@@ -331,6 +333,9 @@ public class KeyguardBottomAreaView extends FrameLayout implements View.OnClickL
     }
 
     private void handleTrustCircleClick() {
+        EventLogTags.writeSysuiLockscreenGesture(
+                EventLogConstants.SYSUI_LOCKSCREEN_GESTURE_TAP_LOCK, 0 /* lengthDp - N/A */,
+                0 /* velocityDp - N/A */);
         mIndicationController.showTransientIndication(
                 R.string.keyguard_indication_trust_disabled);
         mLockPatternUtils.requireCredentialEntry(mLockPatternUtils.getCurrentUser());
