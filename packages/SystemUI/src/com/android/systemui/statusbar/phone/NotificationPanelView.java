@@ -40,6 +40,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.android.keyguard.KeyguardStatusView;
+import com.android.systemui.EventLogTags;
+import com.android.systemui.EventLogConstants;
 import com.android.systemui.R;
 import com.android.systemui.qs.QSContainer;
 import com.android.systemui.qs.QSPanel;
@@ -1689,9 +1691,16 @@ public class NotificationPanelView extends PanelView implements
         boolean start = getLayoutDirection() == LAYOUT_DIRECTION_RTL ? rightPage : !rightPage;
         mIsLaunchTransitionRunning = true;
         mLaunchAnimationEndRunnable = null;
+        float displayDensity = mStatusBar.getDisplayDensity();
+        int lengthDp = Math.abs((int) (translation / displayDensity));
+        int velocityDp = Math.abs((int) (vel / displayDensity));
         if (start) {
+            EventLogTags.writeSysuiLockscreenGesture(
+                    EventLogConstants.SYSUI_LOCKSCREEN_GESTURE_SWIPE_DIALER, lengthDp, velocityDp);
             mKeyguardBottomArea.launchPhone();
         } else {
+            EventLogTags.writeSysuiLockscreenGesture(
+                    EventLogConstants.SYSUI_LOCKSCREEN_GESTURE_SWIPE_CAMERA, lengthDp, velocityDp);
             mSecureCameraLaunchManager.startSecureCameraLaunch();
         }
         mStatusBar.startLaunchTransitionTimeout();
