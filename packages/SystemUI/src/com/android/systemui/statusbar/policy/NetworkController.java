@@ -16,8 +16,6 @@
 
 package com.android.systemui.statusbar.policy;
 
-import android.content.Intent;
-
 public interface NetworkController {
 
     boolean hasMobileDataFeature();
@@ -54,7 +52,6 @@ public interface NetworkController {
 
         public interface AccessPointCallback {
             void onAccessPointsChanged(AccessPoint[] accessPoints);
-            void onSettingsActivityTriggered(Intent intent);
         }
 
         public static class AccessPoint {
