@@ -219,13 +219,25 @@ public final class Call {
         public static final int CAPABILITY_VOICE_PRIVACY = 0x00800000;
 
         /**
+         * Local device supports downgrading a video call to a voice-only call.
+         * @hide
+         */
+        public static final int CAPABILITY_SUPPORTS_DOWNGRADE_TO_VOICE_LOCAL = 0x01000000;
+
+        /**
+         * Remote device supports downgrading a video call to a voice-only call.
+         * @hide
+         */
+        public static final int CAPABILITY_SUPPORTS_DOWNGRADE_TO_VOICE_REMOTE = 0x02000000;
+
+        /**
          * Add participant in an active or conference call option
          * @hide
          */
-        public static final int CAPABILITY_ADD_PARTICIPANT = 0x02000000;
+        public static final int CAPABILITY_ADD_PARTICIPANT = 0x04000000;
 
         //******************************************************************************************
-        // Next CAPABILITY value: 0x01000000
+        // Next CAPABILITY value: 0x08000000
         //******************************************************************************************
 
         /**
@@ -338,6 +350,12 @@ public final class Call {
             }
             if (can(capabilities, CAPABILITY_SUPPORTS_VT_REMOTE_TX)) {
                 builder.append(" CAPABILITY_SUPPORTS_VT_REMOTE_TX");
+            }
+            if (can(capabilities, CAPABILITY_SUPPORTS_DOWNGRADE_TO_VOICE_LOCAL)) {
+                builder.append(" CAPABILITY_SUPPORTS_DOWNGRADE_TO_VOICE_LOCAL");
+            }
+            if (can(capabilities, CAPABILITY_SUPPORTS_DOWNGRADE_TO_VOICE_REMOTE)) {
+                builder.append(" CAPABILITY_SUPPORTS_DOWNGRADE_TO_VOICE_REMOTE");
             }
             if (can(capabilities, CAPABILITY_SUPPORTS_VT_REMOTE_BIDIRECTIONAL)) {
                 builder.append(" CAPABILITY_SUPPORTS_VT_REMOTE_BIDIRECTIONAL");
