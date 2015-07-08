@@ -522,6 +522,10 @@ public final class ActivityManagerService extends ActivityManagerNative
     private static final int PERSISTENT_MASK =
             ApplicationInfo.FLAG_SYSTEM|ApplicationInfo.FLAG_PERSISTENT;
 
+    // Start home process as an empty app
+    private boolean mHomeKilled = false;
+    private String mHomeProcessName = null;
+
     // Intent sent when remote bugreport collection has been completed
     private static final String INTENT_REMOTE_BUGREPORT_FINISHED =
             "android.intent.action.REMOTE_BUGREPORT_FINISHED";
@@ -5216,7 +5220,12 @@ public final class ActivityManagerService extends ActivityManagerNative
                 app.thread.asBinder() == thread.asBinder()) {
             boolean doLowMem = app.instrumentationClass == null;
             boolean doOomAdj = doLowMem;
+            boolean homeRestart = false;
             if (!app.killedByAm) {
+                if (mHomeProcessName != null && app.processName.equals(mHomeProcessName)) {
+                    mHomeKilled = true;
+                    homeRestart = true;
+                }
                 Slog.i(TAG, "Process " + app.processName + " (pid " + pid
                         + ") has died");
                 mAllowLowerMemLevel = true;
@@ -5236,6 +5245,13 @@ public final class ActivityManagerService extends ActivityManagerNative
             }
             if (doLowMem) {
                 doLowMemReportIfNeededLocked(app);
+            }
+            if (mHomeKilled && homeRestart) {
+                Intent intent = getHomeIntent();
+                ActivityInfo aInfo = mStackSupervisor.resolveActivity(intent, null, 0, null, 0);
+                startProcessLocked(aInfo.processName, aInfo.applicationInfo, true, 0,
+                        "activity", null, false, false, true);
+                homeRestart = false;
             }
         } else if (app.pid != pid) {
             // A new process has already been started.
@@ -16996,6 +17012,7 @@ public final class ActivityManagerService extends ActivityManagerNative
         mProcessesOnHold.remove(app);
 
         if (app == mHomeProcess) {
+            mHomeProcessName = mHomeProcess.processName;
             mHomeProcess = null;
         }
         if (app == mPreviousProcess) {
@@ -19332,6 +19349,10 @@ public final class ActivityManagerService extends ActivityManagerNative
             app.adjType = "top-activity";
             foregroundActivities = true;
             procState = PROCESS_STATE_CUR_TOP;
+            if(app == mHomeProcess) {
+                mHomeKilled = false;
+                mHomeProcessName = mHomeProcess.processName;
+            }
         } else if (app.instrumentationClass != null) {
             // Don't want to kill running instrumentation.
             adj = ProcessList.FOREGROUND_APP_ADJ;
@@ -19367,6 +19388,14 @@ public final class ActivityManagerService extends ActivityManagerNative
             app.cached = true;
             app.empty = true;
             app.adjType = "cch-empty";
+
+            if (mHomeKilled && app.processName.equals(mHomeProcessName)) {
+                adj = ProcessList.PERSISTENT_PROC_ADJ;
+                schedGroup = Process.THREAD_GROUP_DEFAULT;
+                app.cached = false;
+                app.empty = false;
+                app.adjType = "top-activity";
+            }
         }
 
         // Examine all activities if not already foreground.
