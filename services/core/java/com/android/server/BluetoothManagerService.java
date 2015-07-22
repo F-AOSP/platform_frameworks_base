@@ -145,6 +145,7 @@ class BluetoothManagerService extends IBluetoothManager.Stub {
     private final BluetoothHandler mHandler;
     private int mErrorRecoveryRetryCounter;
     private final int mSystemUiUid;
+    private boolean mIntentPending = false;
 
     // Save a ProfileServiceConnections object for each of the bound
     // bluetooth profile services
@@ -1696,7 +1697,10 @@ class BluetoothManagerService extends IBluetoothManager.Stub {
                     unbindAndFinish();
                     sendBleStateChanged(prevState, newState);
                     // Don't broadcast as it has already been broadcast before
-                    isStandardBroadcast = false;
+                    if(!mIntentPending)
+                        isStandardBroadcast = false;
+                    else
+                        mIntentPending = false;
 
                 } else if (!intermediate_off) {
                     // connect to GattService
@@ -1724,6 +1728,13 @@ class BluetoothManagerService extends IBluetoothManager.Stub {
                     // Broadcast as STATE_OFF
                     newState = BluetoothAdapter.STATE_OFF;
                     sendBrEdrDownCallback();
+                    if(!isBleAppPresent()){
+                        isStandardBroadcast = false;
+                        mIntentPending = true;
+                    } else {
+                        mIntentPending = false;
+                        isStandardBroadcast = true;
+                    }
                 }
             } else if (newState == BluetoothAdapter.STATE_ON) {
                 boolean isUp = (newState==BluetoothAdapter.STATE_ON);
