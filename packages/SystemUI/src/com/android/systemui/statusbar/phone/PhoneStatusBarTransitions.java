@@ -69,7 +69,8 @@ public final class PhoneStatusBarTransitions extends BarTransitions {
 
     private boolean isOpaque(int mode) {
         return !(mode == MODE_SEMI_TRANSPARENT || mode == MODE_TRANSLUCENT
-                || mode == MODE_TRANSPARENT || mode == MODE_LIGHTS_OUT_TRANSPARENT);
+                || mode == MODE_TRANSPARENT || mode == MODE_LIGHTS_OUT_TRANSPARENT
+                || mode == MODE_LIGHTS_OUT_TRANSLUCENT);
     }
 
     @Override
