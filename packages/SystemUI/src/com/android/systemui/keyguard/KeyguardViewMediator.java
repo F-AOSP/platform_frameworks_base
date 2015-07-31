@@ -43,6 +43,7 @@ import android.os.SystemProperties;
 import android.os.UserHandle;
 import android.os.UserManager;
 import android.provider.Settings;
+import android.telephony.SubscriptionManager;
 import android.telephony.TelephonyManager;
 import android.util.EventLog;
 import android.util.Log;
@@ -121,7 +122,7 @@ public class KeyguardViewMediator extends SystemUI {
     private static final int KEYGUARD_DISPLAY_TIMEOUT_DELAY_DEFAULT = 30000;
     private static final long KEYGUARD_DONE_PENDING_TIMEOUT_MS = 3000;
 
-    final static boolean DEBUG = false;
+    private static final boolean DEBUG = KeyguardConstants.DEBUG;
     private static final boolean DEBUG_SIM_STATES = KeyguardConstants.DEBUG_SIM_STATES;
     private final static boolean DBG_WAKE = false;
 
@@ -392,8 +393,8 @@ public class KeyguardViewMediator extends SystemUI {
                     // gone through setup wizard
                     synchronized (this) {
                         if (shouldWaitForProvisioning()) {
-                            if (!isShowing()) {
-                                if (DEBUG) Log.d(TAG, "ICC_ABSENT isn't showing,"
+                            if (!mShowing) {
+                                if (DEBUG_SIM_STATES) Log.d(TAG, "ICC_ABSENT isn't showing,"
                                         + " we need to show the keyguard since the "
                                         + "device isn't provisioned yet.");
                                 doKeyguardLocked(null);
@@ -406,8 +407,9 @@ public class KeyguardViewMediator extends SystemUI {
                 case PIN_REQUIRED:
                 case PUK_REQUIRED:
                     synchronized (this) {
-                        if (!isShowing()) {
-                            if (DEBUG) Log.d(TAG, "INTENT_VALUE_ICC_LOCKED and keygaurd isn't "
+                        if (!mShowing) {
+                            if (DEBUG_SIM_STATES) Log.d(TAG,
+                                    "INTENT_VALUE_ICC_LOCKED and keygaurd isn't "
                                     + "showing; need to show keyguard so user can enter sim pin");
                             doKeyguardLocked(null);
                         } else {
@@ -417,12 +419,12 @@ public class KeyguardViewMediator extends SystemUI {
                     break;
                 case PERM_DISABLED:
                     synchronized (this) {
-                        if (!isShowing()) {
-                            if (DEBUG) Log.d(TAG, "PERM_DISABLED and "
+                        if (!mShowing) {
+                            if (DEBUG_SIM_STATES) Log.d(TAG, "PERM_DISABLED and "
                                   + "keygaurd isn't showing.");
                             doKeyguardLocked(null);
                         } else {
-                            if (DEBUG) Log.d(TAG, "PERM_DISABLED, resetStateLocked to"
+                            if (DEBUG_SIM_STATES) Log.d(TAG, "PERM_DISABLED, resetStateLocked to"
                                   + "show permanently disabled message in lockscreen.");
                             resetStateLocked();
                         }
@@ -430,7 +432,7 @@ public class KeyguardViewMediator extends SystemUI {
                     break;
                 case READY:
                     synchronized (this) {
-                        if (isShowing()) {
+                        if (mShowing) {
                             resetStateLocked();
                         }
                     }
@@ -860,17 +862,6 @@ public class KeyguardViewMediator extends SystemUI {
     }
 
     /**
-     * Is the keyguard currently showing?
-     */
-    public boolean isShowing() {
-        return mShowing;
-    }
-
-    public boolean isOccluded() {
-        return mOccluded;
-    }
-
-    /**
      * Is the keyguard currently showing and not being force hidden?
      */
     public boolean isShowingAndNotOccluded() {
@@ -968,13 +959,17 @@ public class KeyguardViewMediator extends SystemUI {
         }
 
         // if the setup wizard hasn't run yet, don't show
-        final boolean requireSim = !SystemProperties.getBoolean("keyguard.no_require_sim",
-                false);
+        final boolean requireSim = !SystemProperties.getBoolean("keyguard.no_require_sim", false);
         final boolean provisioned = mUpdateMonitor.isDeviceProvisioned();
         boolean lockedOrMissing = false;
         for (int i = 0; i < mUpdateMonitor.getNumPhones(); i++) {
             int subId = mUpdateMonitor.getSubIdByPhoneId(i);
-            if (isSimLockedOrMissing(subId, requireSim)) {
+            IccCardConstants.State state = mUpdateMonitor.getSimState(subId);
+            boolean simLockedOrMissing = (state != null && state.isPinLocked())
+                || ((state == IccCardConstants.State.ABSENT
+                || state == IccCardConstants.State.PERM_DISABLED)
+                && requireSim);
+            if (simLockedOrMissing) {
                 lockedOrMissing = true;
                 break;
             }
@@ -1005,15 +1000,6 @@ public class KeyguardViewMediator extends SystemUI {
 
     private boolean shouldWaitForProvisioning() {
         return !mUpdateMonitor.isDeviceProvisioned() && !isSecure();
-    }
-
-    private boolean isSimLockedOrMissing (int subId, boolean requireSim) {
-        IccCardConstants.State state = mUpdateMonitor.getSimState(subId);
-        boolean simLockedOrMissing = (state != null && state.isPinLocked())
-                || ((state == IccCardConstants.State.ABSENT
-                || state == IccCardConstants.State.PERM_DISABLED)
-                && requireSim);
-        return simLockedOrMissing;
     }
 
     /**
@@ -1385,6 +1371,7 @@ public class KeyguardViewMediator extends SystemUI {
     }
 
     private void handleOnActivityDrawn() {
+        if (DEBUG) Log.d(TAG, "handleOnActivityDrawn: mKeyguardDonePending=" + mKeyguardDonePending);
         if (mKeyguardDonePending) {
             mStatusBarKeyguardViewManager.onActivityDrawn();
         }
@@ -1482,10 +1469,6 @@ public class KeyguardViewMediator extends SystemUI {
         }
     }
 
-    private void resetKeyguardDonePendingLocked() {
-        mKeyguardDonePending = false;
-        mHandler.removeMessages(KEYGUARD_DONE_PENDING_TIMEOUT);
-    }
     /**
      * Handle message sent by {@link #notifyScreenOnLocked}
      * @see #NOTIFY_SCREEN_ON
@@ -1497,13 +1480,9 @@ public class KeyguardViewMediator extends SystemUI {
         }
     }
 
-    public boolean isDismissable() {
-        return mKeyguardDonePending || !isSecure();
-    }
-
-    private boolean isAssistantAvailable() {
-        return mSearchManager != null
-                && mSearchManager.getAssistIntent(mContext, false, UserHandle.USER_CURRENT) != null;
+    private void resetKeyguardDonePendingLocked() {
+        mKeyguardDonePending = false;
+        mHandler.removeMessages(KEYGUARD_DONE_PENDING_TIMEOUT);
     }
 
     public void onBootCompleted() {
@@ -1565,14 +1544,14 @@ public class KeyguardViewMediator extends SystemUI {
     }
 
     public void addStateMonitorCallback(IKeyguardStateCallback callback) {
-         synchronized (this) {
-             mKeyguardStateCallbacks.add(callback);
-             try {
-                 callback.onSimSecureStateChanged(mUpdateMonitor.isSimPinSecure());
-                 callback.onShowingStateChanged(mShowing);
-             } catch (RemoteException e) {
-                 Slog.w(TAG, "Failed to call onShowingStateChanged or onSimSecureStateChanged", e);
-             }
-         }
-     }
+        synchronized (this) {
+            mKeyguardStateCallbacks.add(callback);
+            try {
+                callback.onSimSecureStateChanged(mUpdateMonitor.isSimPinSecure());
+                callback.onShowingStateChanged(mShowing);
+            } catch (RemoteException e) {
+                Slog.w(TAG, "Failed to call onShowingStateChanged or onSimSecureStateChanged", e);
+            }
+        }
+    }
 }

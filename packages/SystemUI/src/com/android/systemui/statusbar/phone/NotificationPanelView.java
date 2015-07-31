@@ -36,7 +36,6 @@ import android.view.accessibility.AccessibilityEvent;
 import android.view.animation.AnimationUtils;
 import android.view.animation.Interpolator;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.android.keyguard.KeyguardStatusView;
@@ -77,7 +76,6 @@ public class NotificationPanelView extends PanelView implements
     private KeyguardStatusBarView mKeyguardStatusBar;
     private QSContainer mQsContainer;
     private QSPanel mQsPanel;
-    private LinearLayout mTaskManagerPanel;
     private KeyguardStatusView mKeyguardStatusView;
     private ObservableScrollView mScrollView;
     private TextView mClockView;
@@ -197,7 +195,6 @@ public class NotificationPanelView extends PanelView implements
         mKeyguardStatusView = (KeyguardStatusView) findViewById(R.id.keyguard_status_view);
         mQsContainer = (QSContainer) findViewById(R.id.quick_settings_container);
         mQsPanel = (QSPanel) findViewById(R.id.quick_settings_panel);
-        mTaskManagerPanel = (LinearLayout) findViewById(R.id.task_manager_panel);
         mClockView = (TextView) findViewById(R.id.clock_view);
         mScrollView = (ObservableScrollView) findViewById(R.id.scroll_view);
         mScrollView.setListener(this);
@@ -311,18 +308,15 @@ public class NotificationPanelView extends PanelView implements
         updateHeader();
         mNotificationStackScroller.updateIsSmallScreen(
                 mHeader.getCollapsedHeight() + mQsPeekHeight);
-        requestPanelHeightUpdate();
 
-	// If we are running a size change animation, the animation takes care of the height of
+        // If we are running a size change animation, the animation takes care of the height of
         // the container. However, if we are not animating, we always need to make the QS container
         // the desired height so when closing the QS detail, it stays smaller after the size change
         // animation is finished but the detail view is still being animated away (this animation
         // takes longer than the size change animation).
-
-	if (mQsSizeChangeAnimator == null) {
-	    mQsContainer.setHeightOverride(mQsContainer.getDesiredHeight());
+        if (mQsSizeChangeAnimator == null) {
+            mQsContainer.setHeightOverride(mQsContainer.getDesiredHeight());
         }
-
     }
 
     @Override
@@ -1096,9 +1090,7 @@ public class NotificationPanelView extends PanelView implements
         mNotificationStackScroller.setScrollingEnabled(
                 mStatusBarState != StatusBarState.KEYGUARD && (!mQsExpanded
                         || mQsExpansionFromOverscroll));
-        if (!getResources().getBoolean(R.bool.config_showTaskManagerSwitcher)) {
-            mQsPanel.setVisibility(expandVisually ? View.VISIBLE : View.INVISIBLE);
-        }
+        mQsPanel.setVisibility(expandVisually ? View.VISIBLE : View.INVISIBLE);
         mQsContainer.setVisibility(
                 mKeyguardShowing && !expandVisually ? View.INVISIBLE : View.VISIBLE);
         mScrollView.setTouchEnabled(mQsExpanded);
@@ -1306,17 +1298,6 @@ public class NotificationPanelView extends PanelView implements
             return onHeader || (mScrollView.isScrolledToBottom() && yDiff < 0) && isInQsArea(x, y);
         } else {
             return onHeader;
-        }
-    }
-
-    public void setTaskManagerVisibility(boolean mTaskManagerShowing) {
-        if (getResources().getBoolean(R.bool.config_showTaskManagerSwitcher)) {
-            cancelAnimation();
-            boolean expandVisually = mQsExpanded || mStackScrollerOverscrolling;
-            mQsPanel.setVisibility(expandVisually && !mTaskManagerShowing
-                    ? View.VISIBLE : View.GONE);
-            mTaskManagerPanel.setVisibility(expandVisually && mTaskManagerShowing
-                    ? View.VISIBLE : View.GONE);
         }
     }
 
@@ -1698,6 +1679,7 @@ public class NotificationPanelView extends PanelView implements
         }
     }
 
+    @Override
     public void onAnimationToSideStarted(boolean rightPage, float translation, float vel) {
         boolean start = getLayoutDirection() == LAYOUT_DIRECTION_RTL ? rightPage : !rightPage;
         mIsLaunchTransitionRunning = true;

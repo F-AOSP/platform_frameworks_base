@@ -453,12 +453,10 @@ public class KeyguardBottomAreaView extends FrameLayout implements View.OnClickL
         return false;
     }
 
-    public void onMethodSecureChanged(boolean methodSecure) {
+    @Override
+    public void onUnlockMethodStateChanged() {
         updateLockIcon();
         updateCameraVisibility();
-    }
-
-    public void onUnlockMethodStateChanged() {
     }
 
     private void inflatePreviews() {
@@ -471,13 +469,6 @@ public class KeyguardBottomAreaView extends FrameLayout implements View.OnClickL
         if (mCameraPreview != null) {
             mPreviewContainer.addView(mCameraPreview);
             mCameraPreview.setVisibility(View.INVISIBLE);
-        }
-    }
-
-    private void updateEmergencyButton() {
-        boolean enabled = getResources().getBoolean(R.bool.config_showEmergencyButton);
-        if (mEmergencyButton != null) {
-            mLockPatternUtils.updateEmergencyCallButtonState(mEmergencyButton, enabled, false);
         }
     }
 
@@ -508,6 +499,13 @@ public class KeyguardBottomAreaView extends FrameLayout implements View.OnClickL
                 .setInterpolator(mLinearOutSlowInInterpolator)
                 .setStartDelay(delay)
                 .setDuration(DOZE_ANIMATION_ELEMENT_DURATION);
+    }
+
+    private void updateEmergencyButton() {
+        boolean enabled = getResources().getBoolean(R.bool.config_showEmergencyButton);
+        if (mEmergencyButton != null) {
+            mLockPatternUtils.updateEmergencyCallButtonState(mEmergencyButton, enabled, false);
+        }
     }
 
     private final BroadcastReceiver mDevicePolicyReceiver = new BroadcastReceiver() {
