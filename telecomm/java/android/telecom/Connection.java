@@ -255,8 +255,14 @@ public abstract class Connection extends Conferenceable {
      */
     public static final int CAPABILITY_CAN_SEND_RESPONSE_VIA_CONNECTION = 0x00400000;
 
+    /**
+      * Call has voice privacy capability.
+      * @hide
+      */
+    public static final int CAPABILITY_VOICE_PRIVACY = 0x00800000;
+
     //**********************************************************************************************
-    // Next CAPABILITY value: 0x00800000
+    // Next CAPABILITY value: 0x01000000
     //**********************************************************************************************
 
     /**
