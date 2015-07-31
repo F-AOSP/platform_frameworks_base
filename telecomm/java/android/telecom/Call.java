@@ -255,8 +255,14 @@ public final class Call {
          */
         public static final int CAPABILITY_CAN_PULL_CALL = 0x00800000;
 
+        /**
+         * Call has voice privacy capability.
+         * @hide
+         */
+        public static final int CAPABILITY_VOICE_PRIVACY = 0x01000000;
+
         //******************************************************************************************
-        // Next CAPABILITY value: 0x01000000
+        // Next CAPABILITY value: 0x02000000
         //******************************************************************************************
 
         /**
@@ -415,6 +421,9 @@ public final class Call {
             }
             if (can(capabilities, CAPABILITY_CAN_PULL_CALL)) {
                 builder.append(" CAPABILITY_CAN_PULL_CALL");
+            }
+            if (can(capabilities, CAPABILITY_VOICE_PRIVACY)) {
+                builder.append(" CAPABILITY_VOICE_PRIVACY");
             }
             builder.append("]");
             return builder.toString();
