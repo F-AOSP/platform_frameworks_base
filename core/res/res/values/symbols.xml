@@ -2347,6 +2347,8 @@
   <java-symbol type="string" name="config_iccHotswapPromptForRestartDialogComponent" />
   <java-symbol type="string" name="config_packagedKeyboardName" />
 
+  <java-symbol type="bool" name="config_fetch_apn_from_omh_card" />
+
   <!-- config softap extention feature -->
   <java-symbol type="bool" name="config_softap_extention" />
 </resources>

@@ -2368,4 +2368,8 @@
     <!-- The BT name of the keyboard packaged with the device. If this is defined, SystemUI will
          automatically try to pair with it when the device exits tablet mode. -->
     <string translatable="false" name="config_packagedKeyboardName"></string>
+
+    <!-- Support for disabling to fetch APN from OMH card
+         for some cdma carriers -->
+    <bool name="config_fetch_apn_from_omh_card">false</bool>
 </resources>
