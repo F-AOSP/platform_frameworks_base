@@ -654,12 +654,6 @@ public abstract class ConnectionService extends Service {
         }
 
         @Override
-        public void onPhoneAccountChanged(Connection c, PhoneAccountHandle pHandle) {
-            String id = mIdByConnection.get(c);
-            Log.i(this, "Adapter onPhoneAccountChanged %s, %s", c, pHandle);
-            mAdapter.setPhoneAccountHandle(id, pHandle);
-        }
-
         public void onCdmaConnectionTimeReset(Connection c) {
             String id = mIdByConnection.get(c);
             mAdapter.resetCdmaConnectionTime(id);
@@ -719,7 +713,7 @@ public abstract class ConnectionService extends Service {
                 callId,
                 request,
                 new ParcelableConnection(
-                        getAccountHandle(request, connection),
+                        request.getAccountHandle(),
                         connection.getState(),
                         connection.getConnectionCapabilities(),
                         connection.getAddress(),
@@ -738,18 +732,6 @@ public abstract class ConnectionService extends Service {
                         connection.getExtras()));
         if (isUnknown) {
             triggerConferenceRecalculate();
-        }
-    }
-
-    /** @hide */
-    public PhoneAccountHandle getAccountHandle(
-            final ConnectionRequest request, Connection connection) {
-        PhoneAccountHandle pHandle = connection.getPhoneAccountHandle();
-        if (pHandle != null) {
-            Log.i(this, "getAccountHandle, return account handle from local, %s", pHandle);
-            return pHandle;
-        } else {
-            return request.getAccountHandle();
         }
     }
 
