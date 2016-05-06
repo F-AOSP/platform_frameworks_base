@@ -1517,6 +1517,16 @@ public class NetworkManagementService extends INetworkManagementService.Stub
         }
     }
 
+    @Override
+    public void startWigigAccessPoint() {
+        mContext.enforceCallingOrSelfPermission(CONNECTIVITY_INTERNAL, TAG);
+        try {
+            mConnector.execute("softap", "qccmd", "set", "enable_wigig_softap=1");
+        } catch (NativeDaemonConnectorException e) {
+            throw e.rethrowAsParcelableException();
+        }
+    }
+
     private static String getSecurityType(WifiConfiguration wifiConfig) {
         switch (wifiConfig.getAuthType()) {
             case KeyMgmt.WPA_PSK:
@@ -1558,6 +1568,16 @@ public class NetworkManagementService extends INetworkManagementService.Stub
             executeOrLogWithMessage(SOFT_AP_COMMAND, args, NetdResponseCode.SoftapStatusResult,
                     SOFT_AP_COMMAND_SUCCESS, logMsg);
             wifiFirmwareReload(wlanIface, "STA");
+        } catch (NativeDaemonConnectorException e) {
+            throw e.rethrowAsParcelableException();
+        }
+    }
+
+    @Override
+    public void stopWigigAccessPoint() {
+        mContext.enforceCallingOrSelfPermission(CONNECTIVITY_INTERNAL, TAG);
+        try {
+            mConnector.execute("softap", "qccmd", "set", "enable_wigig_softap=0");
         } catch (NativeDaemonConnectorException e) {
             throw e.rethrowAsParcelableException();
         }
